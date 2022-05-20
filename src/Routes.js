@@ -1,6 +1,6 @@
 import { Redirect } from "react-router-dom";
 import { Switch } from "react-router-dom";
-import { SidebarLayout } from "./layouts";
+import { LoginLayout, SidebarLayout } from "./layouts";
 import { HomePage, LoginPage } from "./pages";
 import { GuestRoute } from "./routing";
 
@@ -17,7 +17,7 @@ const Routes = () => {
       <GuestRoute
         path="/login"
         exact
-        layout={SidebarLayout}
+        layout={LoginLayout}
         component={LoginPage}
       />
     </Switch>

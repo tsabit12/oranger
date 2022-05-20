@@ -1,1 +1,2 @@
-export { default as SidebarLayout } from "./SidebarLayout";
+export { default as SidebarLayout } from "./Sidebar";
+export { default as LoginLayout } from "./Login";

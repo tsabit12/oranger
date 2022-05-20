@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Box } from "@mui/system";
 import { Typography } from "@mui/material";
 
-const SidebarLayout = (props) => {
+const Sidebar = (props) => {
   const { children } = props;
 
   return (
@@ -14,8 +14,8 @@ const SidebarLayout = (props) => {
   );
 };
 
-SidebarLayout.propTypes = {
+Sidebar.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export default SidebarLayout;
+export default Sidebar;
