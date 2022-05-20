@@ -1,8 +1,12 @@
+import { Typography } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "./theme";
+
 function App() {
   return (
-    <div>
-      <p>hello world</p>
-    </div>
+    <ThemeProvider theme={theme}>
+      <Typography>Helo world</Typography>
+    </ThemeProvider>
   );
 }
 
