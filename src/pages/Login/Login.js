@@ -16,12 +16,22 @@ const RootLayout = styled(Box)({
   backgroundColor: "#FFF",
   borderRadius: "10px",
   border: "1px solid rgba(163, 163, 162, 0.7)",
+  margin: "20px 20px",
+  padding: "15px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  position: "relative",
 });
 
 const Login = () => {
   return (
-    <RootLayout sx={{ padding: { lg: "30px 15px", xs: "30px 12px" } }}>
-      <Stack spacing={"30px"}>
+    <RootLayout
+      sx={{
+        height: { xs: "100%", lg: "60vh" },
+      }}
+    >
+      <Stack spacing={"50px"} sx={{ width: { lg: "80%", xs: "100%" } }}>
         <Typography fontSize={"20px"} fontWeight="bold" textAlign="center">
           Login to Your Account
         </Typography>
@@ -49,14 +59,19 @@ const Login = () => {
             >
               LOGIN
             </Button>
+
+            <Typography>
+              Klik{" "}
+              <MuiLink underline="none" component={Link} to="/forgot-password">
+                disini
+              </MuiLink>{" "}
+              jika lupa password. Atau kamu bisa{" "}
+              <MuiLink underline="none" component={Link} to="/signup">
+                registrasi disini
+              </MuiLink>
+            </Typography>
           </Stack>
         </form>
-        <Typography textAlign={"center"}>
-          Did you{" "}
-          <MuiLink underline="none" component={Link} to="/forgot-password">
-            forgot your password?
-          </MuiLink>
-        </Typography>
       </Stack>
     </RootLayout>
   );

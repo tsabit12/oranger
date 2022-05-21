@@ -1,7 +1,7 @@
 import { Redirect } from "react-router-dom";
 import { Switch } from "react-router-dom";
-import { LoginLayout, SidebarLayout } from "./layouts";
-import { HomePage, LoginPage } from "./pages";
+import { LoginLayout, SidebarLayout, SignupLayout } from "./layouts";
+import { HomePage, LoginPage, SignupPage } from "./pages";
 import { GuestRoute } from "./routing";
 
 const Routes = () => {
@@ -19,6 +19,12 @@ const Routes = () => {
         exact
         layout={LoginLayout}
         component={LoginPage}
+      />
+      <GuestRoute
+        path="/signup"
+        exact
+        layout={SignupLayout}
+        component={SignupPage}
       />
     </Switch>
   );
