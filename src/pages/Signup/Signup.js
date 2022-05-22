@@ -12,9 +12,9 @@ import {
 import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { getBerkas } from "../../actions/references";
+import { getBerkas, getOffice } from "../../actions/references";
 import PropTypes from "prop-types";
-import { IdentitasForm } from "./components";
+import { IdentitasForm, WilayahKerjaForm } from "./components";
 import { Link } from "react-router-dom";
 
 const RootLayout = styled(Box)({
@@ -66,18 +66,23 @@ const Signup = (props) => {
     domisiliasktp: false,
   });
   const [errors, seterrors] = useState({});
+  const [officeValue, setofficeValue] = useState({
+    regional: "",
+    autocompleteValue: {},
+    autocompleteInputValue: "",
+    options: [],
+  });
 
   useEffect(() => {
     (async () => {
       try {
         await props.getBerkas();
+        await props.getOffice();
       } catch (error) {
         console.log({ error });
       }
     })();
   }, []);
-
-  // const handleChangeTab = (e, newValue) => settabValue(newValue);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -102,6 +107,12 @@ const Signup = (props) => {
     if (type === "next") {
       if (activePage === 0) {
         const errors = validateIdentitas(identitas);
+        seterrors(errors);
+        if (Object.keys(errors).length === 0) {
+          settabValue(activePage + 1);
+        }
+      } else if (activePage === 1) {
+        const errors = validateWilayahKerja(officeValue);
         seterrors(errors);
         if (Object.keys(errors).length === 0) {
           settabValue(activePage + 1);
@@ -137,6 +148,13 @@ const Signup = (props) => {
     return error;
   };
 
+  const validateWilayahKerja = (field) => {
+    const error = {};
+    if (!field.regional) error.regional = "Pilih regional dahulu";
+    if (!field.autocompleteInputValue) error.kprk = "Kprk belum dipilih";
+    return error;
+  };
+
   const handleChangeCheckbox = (e) => {
     const val = e.target.checked;
 
@@ -147,6 +165,23 @@ const Signup = (props) => {
     }));
 
     seterrors((prev) => ({ ...prev, alamatdomisili: undefined }));
+  };
+
+  const handleChangeRegion = (e) => {
+    const val = e.target.value;
+    const list = props.references.office[val];
+    setofficeValue((prev) => ({
+      ...prev,
+      regional: val,
+      options: list,
+      autocompleteValue: list[0], //first value
+    }));
+    seterrors((prev) => ({ ...prev, regional: undefined }));
+  };
+
+  const handleChangeOffice = (value, name) => {
+    setofficeValue((prev) => ({ ...prev, [name]: value }));
+    seterrors((prev) => ({ ...prev, kprk: undefined }));
   };
 
   return (
@@ -167,9 +202,9 @@ const Signup = (props) => {
             <CustomTab label="Data Personal" />
             <CustomTab label="Wilayah Kerja" />
             <CustomTab label="Salinan Berkas" />
-            <CustomTab label="Notifikasi" />
           </Tabs>
           <Box />
+
           {tabValue === 0 && (
             <IdentitasForm
               value={identitas}
@@ -178,6 +213,21 @@ const Signup = (props) => {
               onChangeDate={handleChangeDate}
               errors={errors}
               handleChangeCheckbox={handleChangeCheckbox}
+            />
+          )}
+
+          {tabValue === 1 && (
+            <WilayahKerjaForm
+              offices={props.references.office}
+              values={officeValue}
+              onChangeRegion={handleChangeRegion}
+              onChangeInputValue={(value) =>
+                handleChangeOffice(value, "autocompleteInputValue")
+              }
+              onChangeValue={(value) =>
+                handleChangeOffice(value, "autocompleteValue")
+              }
+              errors={errors}
             />
           )}
 
@@ -220,6 +270,7 @@ const Signup = (props) => {
 Signup.propTypes = {
   getBerkas: PropTypes.func.isRequired,
   references: PropTypes.object.isRequired,
+  getOffice: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state) {
@@ -228,4 +279,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, { getBerkas })(Signup);
+export default connect(mapStateToProps, { getBerkas, getOffice })(Signup);

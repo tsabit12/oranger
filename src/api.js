@@ -16,5 +16,9 @@ export default {
       axios
         .get(`${process.env.REACT_APP_ENDPOINT}/referensi/berkas`, { params })
         .then((res) => res.data),
+    office: (params) =>
+      axios
+        .get(`${process.env.REACT_APP_ENDPOINT}/referensi/office`, { params })
+        .then((res) => res.data),
   },
 };

@@ -31,7 +31,7 @@ const IdentitasForm = ({
   handleChangeCheckbox,
 }) => {
   return (
-    <Box>
+    <Box sx={{ minHeight: "60vh" }}>
       <Grid container spacing={"15px"}>
         <Grid item xs={12}>
           <FormControl fullWidth>
