@@ -23,7 +23,7 @@ const BerkasForm = ({ list, onChange, onError, errors, values }) => {
   return (
     <Box sx={{ minHeight: "60vh", padding: "0px 15px" }}>
       <Typography textAlign={"center"} sx={{ marginBottom: "15px" }}>
-        Pastikan format file yang diupload adalah{" "}
+        Harap pastikan format file yang diupload adalah{" "}
         <span style={{ color: "red" }}>jpg/pdf/png/jpeg</span>
       </Typography>
       <Stack spacing={"20px"}>
