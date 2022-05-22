@@ -17,9 +17,7 @@ const Login = ({ children }) => {
         backgroundRepeat: "none",
       }}
     >
-      <Grid item lg={5} xs={12}>
-        {children}
-      </Grid>
+      {children}
     </Grid>
   );
 };

@@ -15,6 +15,12 @@ export const theme = createTheme({
       },
     },
   },
+  palette: {
+    teritary: {
+      main: "#64748B",
+      contrastText: "#fff",
+    },
+  },
   typography: {
     fontFamily: '"Andika New Basic","Aladin","DM Sans","Inter","Segoe UI"',
     h4: {
