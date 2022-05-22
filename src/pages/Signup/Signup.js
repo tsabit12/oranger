@@ -14,7 +14,7 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { getBerkas, getOffice } from "../../actions/references";
 import PropTypes from "prop-types";
-import { IdentitasForm, WilayahKerjaForm } from "./components";
+import { BerkasForm, IdentitasForm, WilayahKerjaForm } from "./components";
 import { Link } from "react-router-dom";
 
 const RootLayout = styled(Box)({
@@ -47,7 +47,7 @@ const ButtonText = styled((props) => (
 }));
 
 const Signup = (props) => {
-  const { agama: agamaList } = props.references;
+  const { agama: agamaList, berkas: berkasList } = props.references;
   const [tabValue, settabValue] = useState(0);
   const [identitas, setidentitas] = useState({
     fullname: "",
@@ -72,6 +72,8 @@ const Signup = (props) => {
     autocompleteInputValue: "",
     options: [],
   });
+  // eslint-disable-next-line no-unused-vars
+  const [berkasValue, setberkasValue] = useState({});
 
   useEffect(() => {
     (async () => {
@@ -83,6 +85,18 @@ const Signup = (props) => {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    if (berkasList.length > 0) {
+      const val = {};
+
+      berkasList.forEach((e) => {
+        val[e.berkasid] = null;
+      });
+
+      setberkasValue(val);
+    }
+  }, [berkasList]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -184,6 +198,17 @@ const Signup = (props) => {
     seterrors((prev) => ({ ...prev, kprk: undefined }));
   };
 
+  const handleChangeFile = (file, name) => {
+    setberkasValue((prev) => ({
+      ...prev,
+      [name]: file ? file : null,
+    }));
+    seterrors((prev) => ({ ...prev, [name]: undefined }));
+  };
+
+  const onBerkasError = (name) =>
+    seterrors((prev) => ({ ...prev, [name]: "Berkas tidak valid" }));
+
   return (
     <Grid item lg={8} xs={12} sm={12}>
       <RootLayout>
@@ -231,6 +256,16 @@ const Signup = (props) => {
             />
           )}
 
+          {tabValue === 2 && (
+            <BerkasForm
+              list={berkasList}
+              onChange={handleChangeFile}
+              errors={errors}
+              onError={onBerkasError}
+              values={berkasValue}
+            />
+          )}
+
           <Stack
             direction={"row"}
             justifyContent="space-between"
@@ -257,7 +292,7 @@ const Signup = (props) => {
                 variant="outlined"
                 onClick={() => handleChangePage(tabValue, "next")}
               >
-                Selanjutnya
+                {tabValue === 2 ? "Submit" : "Selanjutnya"}
               </ButtonText>
             </Stack>
           </Stack>
