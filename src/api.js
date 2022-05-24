@@ -21,4 +21,14 @@ export default {
         .get(`${process.env.REACT_APP_ENDPOINT}/referensi/office`, { params })
         .then((res) => res.data),
   },
+  register: (formData) =>
+    axios
+      .post(`${process.env.REACT_APP_ENDPOINT}/register`, formData)
+      .then((res) => {
+        if (res.data.status === true) {
+          return Promise.resolve(res);
+        } else {
+          return Promise.reject(res.data.message);
+        }
+      }),
 };

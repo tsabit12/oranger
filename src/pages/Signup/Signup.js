@@ -14,8 +14,15 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { getBerkas, getOffice } from "../../actions/references";
 import PropTypes from "prop-types";
-import { BerkasForm, IdentitasForm, WilayahKerjaForm } from "./components";
+import {
+  BerkasForm,
+  IdentitasForm,
+  SuccessMessage,
+  WilayahKerjaForm,
+} from "./components";
 import { Link } from "react-router-dom";
+import api from "../../api";
+import { convertDate } from "../../utils";
 
 const RootLayout = styled(Box)({
   backgroundColor: "#FFF",
@@ -72,8 +79,9 @@ const Signup = (props) => {
     autocompleteInputValue: "",
     options: [],
   });
-  // eslint-disable-next-line no-unused-vars
   const [berkasValue, setberkasValue] = useState({});
+  const [loading, setloading] = useState(false);
+  const [success, setsuccess] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -132,7 +140,11 @@ const Signup = (props) => {
           settabValue(activePage + 1);
         }
       } else {
-        settabValue(activePage + 1);
+        const errors = validateBerkas(berkasValue);
+        seterrors(errors);
+        if (Object.keys(errors).length === 0) {
+          onSubmit();
+        }
       }
     } else {
       settabValue(activePage - 1);
@@ -166,6 +178,16 @@ const Signup = (props) => {
     const error = {};
     if (!field.regional) error.regional = "Pilih regional dahulu";
     if (!field.autocompleteInputValue) error.kprk = "Kprk belum dipilih";
+    return error;
+  };
+
+  const validateBerkas = (field) => {
+    const error = {};
+
+    berkasList.forEach((e) => {
+      if (field[e.berkasid] === null) error[e.berkasid] = "Belum diisi";
+    });
+
     return error;
   };
 
@@ -209,94 +231,146 @@ const Signup = (props) => {
   const onBerkasError = (name) =>
     seterrors((prev) => ({ ...prev, [name]: "Berkas tidak valid" }));
 
+  const onSubmit = async () => {
+    const formData = new FormData();
+
+    formData.append("fullname", identitas.fullname);
+    formData.append("phone", identitas.phone);
+    formData.append("email", identitas.email);
+    formData.append("tempatlahir", identitas.birthplace);
+    formData.append(
+      "tanggallahir",
+      convertDate(identitas.birthday, "yyyymmdd")
+    );
+    formData.append("gender", identitas.gender);
+    formData.append("nik", identitas.nik);
+    formData.append(
+      "npwp",
+      identitas.npwp ? identitas.npwp : "000000000000000"
+    );
+    formData.append("alamat", identitas.alamatktp);
+    formData.append("alamatdomisili", identitas.alamatdomisili);
+    formData.append("status", identitas.status);
+    formData.append(
+      "agama",
+      identitas.agama === "00" ? identitas.agamalainnya : identitas.agama
+    );
+    formData.append("kantor", officeValue.autocompleteValue?.nopend);
+    berkasList.forEach((e) => {
+      formData.append(`berkas[${e.berkasid}]`, berkasValue[e.berkasid]);
+    });
+
+    setloading(true);
+
+    try {
+      await api.register(formData);
+      setsuccess(true);
+    } catch (error) {
+      let message = "Internal sever error";
+      if (typeof error === "string") message = error;
+      seterrors({ global: message });
+    }
+
+    setloading(false);
+  };
+
   return (
     <Grid item lg={8} xs={12} sm={12}>
       <RootLayout>
-        <Stack spacing={"20px"}>
-          <Typography color={"#323333"} textAlign={"center"}>
-            Untuk registrasi menjadi{" "}
-            <span style={{ fontWeight: "bold", color: "#0a0a0a" }}>
-              Oranger antaran
-            </span>{" "}
-            silahkan
-            <br /> lengkapi form dibawah ini dengan benar
-          </Typography>
-          <Divider />
-
-          <Tabs value={tabValue} variant="fullWidth">
-            <CustomTab label="Data Personal" />
-            <CustomTab label="Wilayah Kerja" />
-            <CustomTab label="Salinan Berkas" />
-          </Tabs>
-          <Box />
-
-          {tabValue === 0 && (
-            <IdentitasForm
-              value={identitas}
-              onChange={handleChange}
-              agamaList={agamaList}
-              onChangeDate={handleChangeDate}
-              errors={errors}
-              handleChangeCheckbox={handleChangeCheckbox}
-            />
-          )}
-
-          {tabValue === 1 && (
-            <WilayahKerjaForm
-              offices={props.references.office}
-              values={officeValue}
-              onChangeRegion={handleChangeRegion}
-              onChangeInputValue={(value) =>
-                handleChangeOffice(value, "autocompleteInputValue")
-              }
-              onChangeValue={(value) =>
-                handleChangeOffice(value, "autocompleteValue")
-              }
-              errors={errors}
-            />
-          )}
-
-          {tabValue === 2 && (
-            <BerkasForm
-              list={berkasList}
-              onChange={handleChangeFile}
-              errors={errors}
-              onError={onBerkasError}
-              values={berkasValue}
-            />
-          )}
-
-          <Stack
-            direction={"row"}
-            justifyContent="space-between"
-            alignItems={"center"}
-          >
-            <Typography>
-              Kembali{" "}
-              <MuiLink component={Link} to="/login" underline="none">
-                login
-              </MuiLink>
+        {success ? (
+          <SuccessMessage />
+        ) : (
+          <Stack spacing={"20px"}>
+            <Typography color={"#323333"} textAlign={"center"}>
+              Untuk registrasi menjadi{" "}
+              <span style={{ fontWeight: "bold", color: "#0a0a0a" }}>
+                Oranger antaran
+              </span>{" "}
+              silahkan
+              <br /> lengkapi form dibawah ini dengan benar
             </Typography>
-            <Stack direction={"row"} spacing={"10px"}>
-              <ButtonText
-                size="small"
-                color="teritary"
-                variant="outlined"
-                disabled={tabValue > 0 ? false : true}
-                onClick={() => handleChangePage(tabValue, "back")}
-              >
-                Kembali
-              </ButtonText>
-              <ButtonText
-                size="small"
-                variant="outlined"
-                onClick={() => handleChangePage(tabValue, "next")}
-              >
-                {tabValue === 2 ? "Submit" : "Selanjutnya"}
-              </ButtonText>
+            <Divider />
+
+            <Tabs value={tabValue} variant="fullWidth">
+              <CustomTab label="Data Personal" />
+              <CustomTab label="Wilayah Kerja" />
+              <CustomTab label="Salinan Berkas" />
+            </Tabs>
+            <Box />
+
+            {tabValue === 0 && (
+              <IdentitasForm
+                value={identitas}
+                onChange={handleChange}
+                agamaList={agamaList}
+                onChangeDate={handleChangeDate}
+                errors={errors}
+                handleChangeCheckbox={handleChangeCheckbox}
+              />
+            )}
+
+            {tabValue === 1 && (
+              <WilayahKerjaForm
+                offices={props.references.office}
+                values={officeValue}
+                onChangeRegion={handleChangeRegion}
+                onChangeInputValue={(value) =>
+                  handleChangeOffice(value, "autocompleteInputValue")
+                }
+                onChangeValue={(value) =>
+                  handleChangeOffice(value, "autocompleteValue")
+                }
+                errors={errors}
+              />
+            )}
+
+            {tabValue === 2 && (
+              <BerkasForm
+                list={berkasList}
+                onChange={handleChangeFile}
+                errors={errors}
+                onError={onBerkasError}
+                values={berkasValue}
+              />
+            )}
+
+            <Stack
+              direction={"row"}
+              justifyContent="space-between"
+              alignItems={"center"}
+            >
+              <Typography>
+                Kembali{" "}
+                <MuiLink component={Link} to="/login" underline="none">
+                  login
+                </MuiLink>
+              </Typography>
+              <Stack direction={"row"} spacing={"10px"}>
+                <ButtonText
+                  size="small"
+                  color="teritary"
+                  variant="outlined"
+                  disabled={tabValue > 0 ? false : true}
+                  onClick={() => handleChangePage(tabValue, "back")}
+                >
+                  Kembali
+                </ButtonText>
+                <ButtonText
+                  size="small"
+                  variant="outlined"
+                  onClick={() => handleChangePage(tabValue, "next")}
+                  disabled={loading}
+                >
+                  {tabValue === 2
+                    ? loading
+                      ? "Loading.."
+                      : "Submit"
+                    : "Selanjutnya"}
+                </ButtonText>
+              </Stack>
             </Stack>
           </Stack>
-        </Stack>
+        )}
       </RootLayout>
     </Grid>
   );
