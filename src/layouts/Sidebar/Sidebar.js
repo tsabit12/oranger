@@ -14,17 +14,20 @@ import {
   Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { AppBar, Drawer, DrawerHeader } from "./components";
+import { AppBar, BootstrapTooltip, Drawer, DrawerHeader } from "./components";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useTheme } from "@emotion/react";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import { connect } from "react-redux";
+import { setLoggedOut } from "../../actions/auth";
 
 const Sidebar = (props) => {
   const { children } = props;
   const theme = useTheme();
-  const [open, setopen] = useState(false);
+  const [open, setopen] = useState(true);
 
   const handleDrawerOpen = () => setopen(true);
 
@@ -47,9 +50,24 @@ const Sidebar = (props) => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             Mini variant drawer
           </Typography>
+          <div>
+            <BootstrapTooltip title="Logout">
+              <IconButton
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={() => props.setLoggedOut()}
+                color="inherit"
+                disableRipple
+              >
+                <ExitToAppIcon />
+              </IconButton>
+            </BootstrapTooltip>
+          </div>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -98,6 +116,7 @@ const Sidebar = (props) => {
 
 Sidebar.propTypes = {
   children: PropTypes.node.isRequired,
+  setLoggedOut: PropTypes.func.isRequired,
 };
 
-export default Sidebar;
+export default connect(null, { setLoggedOut })(Sidebar);
