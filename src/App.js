@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { ThemeProvider } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 import { Provider as ReduxProvider } from "react-redux";
@@ -13,11 +14,18 @@ import { encode as base64Encode } from "base-64";
 import axios from "axios";
 import { Backdrop } from "@mui/material";
 import { FacebookCircularProgress } from "./components";
+import Cookies from "js-cookie";
+import { setLoggedIn } from "./actions/auth";
 
 const store = createStore(
   rootReducer,
   composeWithDevTools(applyMiddleware(thunk))
 );
+
+if (Cookies.get(process.env.REACT_APP_COOKIES_NAME)) {
+  const token = Cookies.get(process.env.REACT_APP_COOKIES_NAME);
+  store.dispatch(setLoggedIn(token));
+}
 
 function App() {
   const [loading, setloading] = useState(true);

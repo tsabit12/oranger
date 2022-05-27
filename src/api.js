@@ -31,4 +31,8 @@ export default {
           return Promise.reject(res.data.message);
         }
       }),
+  login: (payload) =>
+    axios
+      .post(`${process.env.REACT_APP_ENDPOINT}/auth`, { ...payload })
+      .then((res) => res.data),
 };

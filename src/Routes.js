@@ -2,13 +2,13 @@ import { Redirect } from "react-router-dom";
 import { Switch } from "react-router-dom";
 import { LoginLayout, SidebarLayout } from "./layouts";
 import { HomePage, LoginPage, SignupPage } from "./pages";
-import { GuestRoute } from "./routing";
+import { GuestRoute, UserRoute } from "./routing";
 
 const Routes = () => {
   return (
     <Switch>
       <Redirect from="/" to={"/home"} exact />
-      <GuestRoute
+      <UserRoute
         path="/home"
         exact
         layout={SidebarLayout}
