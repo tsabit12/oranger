@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Box } from "@mui/system";
 import {
   CssBaseline,
   Divider,
+  Icon,
   IconButton,
   List,
   ListItem,
@@ -18,16 +19,28 @@ import { AppBar, BootstrapTooltip, Drawer, DrawerHeader } from "./components";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useTheme } from "@emotion/react";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { connect } from "react-redux";
 import { setLoggedOut } from "../../actions/auth";
+import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const Sidebar = (props) => {
+  const { pathname } = useLocation();
+
   const { children } = props;
   const theme = useTheme();
   const [open, setopen] = useState(true);
+  const [title, settitle] = useState("");
+
+  useEffect(() => {
+    if (pathname) {
+      const findPath = props.menus.find((row) => row.path === pathname);
+      if (findPath) {
+        settitle(findPath.title);
+      }
+    }
+  }, [pathname]);
 
   const handleDrawerOpen = () => setopen(true);
 
@@ -51,7 +64,7 @@ const Sidebar = (props) => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Mini variant drawer
+            {title}
           </Typography>
           <div>
             <BootstrapTooltip title="Logout">
@@ -82,8 +95,16 @@ const Sidebar = (props) => {
         </DrawerHeader>
         <Divider />
         <List>
-          {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: "block" }}>
+          {props.menus.map((row, index) => (
+            <ListItem
+              key={index}
+              disablePadding
+              sx={{ display: "block" }}
+              component={Link}
+              to={row.path}
+              button
+              selected={pathname === row.path}
+            >
               <ListItemButton
                 sx={{
                   minHeight: 48,
@@ -98,9 +119,12 @@ const Sidebar = (props) => {
                     justifyContent: "center",
                   }}
                 >
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  <Icon>{row.icon}</Icon>
                 </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText
+                  primary={row.title}
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
               </ListItemButton>
             </ListItem>
           ))}
@@ -117,6 +141,13 @@ const Sidebar = (props) => {
 Sidebar.propTypes = {
   children: PropTypes.node.isRequired,
   setLoggedOut: PropTypes.func.isRequired,
+  menus: PropTypes.array.isRequired,
 };
 
-export default connect(null, { setLoggedOut })(Sidebar);
+function mapStateToProps(state) {
+  return {
+    menus: state.menus,
+  };
+}
+
+export default connect(mapStateToProps, { setLoggedOut })(Sidebar);
