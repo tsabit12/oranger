@@ -18,7 +18,7 @@ const Kandidat = (props) => {
   useEffect(() => {
     (async () => {
       try {
-        await props.getkandidat({ page: 0 });
+        await props.getkandidat({ page: props.activePage });
       } catch (error) {
         console.log(error);
       }
@@ -89,7 +89,7 @@ const Kandidat = (props) => {
               variant="outlined"
               onClick={() =>
                 props.history.push(
-                  `interview?page=${props.activePage}&id=${value}`
+                  `kandidat/interview?page=${props.activePage}&id=${value}`
                 )
               }
             >
