@@ -35,4 +35,10 @@ export default {
     axios
       .post(`${process.env.REACT_APP_ENDPOINT}/auth`, { ...payload })
       .then((res) => res.data),
+  user: {
+    kandidat: (params) =>
+      axios
+        .get(`${process.env.REACT_APP_ENDPOINT}/kandidat`, { params })
+        .then((res) => res.data),
+  },
 };
