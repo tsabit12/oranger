@@ -118,6 +118,7 @@ const Interview = (props) => {
       username: kandidatData.username,
       nilai: JSON.stringify(nilaiVal),
       status: confirm.message,
+      fromstat: props.status,
     };
 
     try {
@@ -155,35 +156,36 @@ const Interview = (props) => {
               </span>
             </Typography>
             <Grid container spacing={2}>
-              {berkas.map((row, index) => (
-                <Grid item xs={4} key={index}>
-                  <ImageCard>
-                    <img
-                      src={`${process.env.REACT_APP_ENDPOINT}/assets/berkas/${row.file_name}`}
-                      style={{ width: "100%", height: "30vh" }}
-                    />
-                    <Box sx={{ padding: "15px 10px" }}>
-                      <Typography
-                        textAlign={"center"}
-                        sx={{ fontSize: "18px", fontWeight: "bold" }}
-                      >
-                        {row.keterangan}
-                      </Typography>
-                      {Object.keys(nilai).length > 0 && (
-                        <Stack direction={"row"} justifyContent="center">
-                          <Rating
-                            name="simple-controlled"
-                            value={nilai[row.berkasid]}
-                            onChange={(event, newValue) =>
-                              updateRating(row.berkasid, newValue)
-                            }
-                          />
-                        </Stack>
-                      )}
-                    </Box>
-                  </ImageCard>
-                </Grid>
-              ))}
+              {berkas.length > 0 &&
+                berkas.map((row, index) => (
+                  <Grid item xs={4} key={index}>
+                    <ImageCard>
+                      <img
+                        src={`${process.env.REACT_APP_ENDPOINT}/assets/berkas/${row.file_name}`}
+                        style={{ width: "100%", height: "30vh" }}
+                      />
+                      <Box sx={{ padding: "15px 10px" }}>
+                        <Typography
+                          textAlign={"center"}
+                          sx={{ fontSize: "18px", fontWeight: "bold" }}
+                        >
+                          {row.keterangan}
+                        </Typography>
+                        {Number(nilai[row.berkasid]) >= 0 && (
+                          <Stack direction={"row"} justifyContent="center">
+                            <Rating
+                              name="simple-controlled"
+                              value={Number(nilai[row.berkasid])}
+                              onChange={(event, newValue) =>
+                                updateRating(row.berkasid, newValue)
+                              }
+                            />
+                          </Stack>
+                        )}
+                      </Box>
+                    </ImageCard>
+                  </Grid>
+                ))}
             </Grid>
             {interviewQuestion.length > 0 &&
               interviewQuestion.map((row, i) => (
@@ -202,20 +204,22 @@ const Interview = (props) => {
                 </Stack>
               ))}
             <Stack direction={"row"} spacing={"20px"}>
-              <Button
-                fullWidth
-                variant="outlined"
-                color="error"
-                endIcon={<CloseIcon />}
-                onClick={() =>
-                  setConfirm({
-                    visible: true,
-                    message: "S3",
-                  })
-                }
-              >
-                MITRA INI TIDAK LULUS
-              </Button>
+              {props.status !== "S3" && (
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  color="error"
+                  endIcon={<CloseIcon />}
+                  onClick={() =>
+                    setConfirm({
+                      visible: true,
+                      message: "S3",
+                    })
+                  }
+                >
+                  MITRA INI TIDAK LULUS
+                </Button>
+              )}
               <Button
                 fullWidth
                 variant="outlined"
@@ -271,13 +275,16 @@ Interview.propTypes = {
   }).isRequired,
   interviewQuestion: PropTypes.array.isRequired,
   getBerkas: PropTypes.func.isRequired,
+  status: PropTypes.string.isRequired,
 };
 
 function mapStateToProps(state, props) {
   let kandidatData = {};
+  let status = "";
   if (props.location.search) {
     const search = queryString.parse(props.location.search);
-    if (search.page && search.id) {
+    if (search.page && search.id && search.status) {
+      status = search.status;
       const data = state.kandidat.data[Number(search.page)]
         ? state.kandidat.data[Number(search.page)]
         : [];
@@ -293,6 +300,7 @@ function mapStateToProps(state, props) {
     interviewQuestion: state.references.berkas.filter(
       (row) => Number(row.with_file) === 0
     ),
+    status,
   };
 }
 

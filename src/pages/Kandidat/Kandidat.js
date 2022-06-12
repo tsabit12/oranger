@@ -88,6 +88,7 @@ const Kandidat = (props) => {
         sort: false,
         filter: false,
         customBodyRender: (value) => {
+          let data = props.kandidates.find((row) => row.username === value);
           if (isLoading && props.kandidates.length === 0) {
             return null;
           }
@@ -96,13 +97,21 @@ const Kandidat = (props) => {
             <ButtonInterview
               size="small"
               variant="outlined"
-              onClick={() =>
-                props.history.push(
-                  `kandidat/interview?page=${props.activePage}&id=${value}`
-                )
-              }
+              color={data.statusid === "S2" ? "warning" : "primary"}
+              onClick={() => {
+                if (data.statusid === "S2") {
+                  props.history.push(
+                    `kandidat/pks?page=${props.activePage}&id=${value}`
+                  );
+                } else {
+                  props.history.push(
+                    `kandidat/interview?page=${props.activePage}&id=${value}&status=${data.statusid}`
+                  );
+                }
+              }}
+              fullWidth
             >
-              Interview
+              {data.statusid === "S2" ? "Entri Pks" : "Interview"}
             </ButtonInterview>
           );
         },
