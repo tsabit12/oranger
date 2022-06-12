@@ -1,7 +1,14 @@
 import { Redirect } from "react-router-dom";
 import { Switch } from "react-router-dom";
 import { LoginLayout, SidebarLayout } from "./layouts";
-import { HomePage, Interview, Kandidat, LoginPage, SignupPage } from "./pages";
+import {
+  AddPks,
+  HomePage,
+  Interview,
+  Kandidat,
+  LoginPage,
+  SignupPage,
+} from "./pages";
 import { GuestRoute, UserRoute } from "./routing";
 
 const Routes = () => {
@@ -25,6 +32,12 @@ const Routes = () => {
         exact
         layout={SidebarLayout}
         component={Interview}
+      />
+      <UserRoute
+        path="/kandidat/pks/:id"
+        exact
+        layout={SidebarLayout}
+        component={AddPks}
       />
       <GuestRoute
         path="/login"

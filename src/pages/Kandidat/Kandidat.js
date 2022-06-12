@@ -103,7 +103,7 @@ const Kandidat = (props) => {
               onClick={() => {
                 if (data.statusid === "S2") {
                   props.history.push(
-                    `kandidat/pks?page=${props.activePage}&id=${value}`
+                    `kandidat/pks/${value}?page=${props.activePage}`
                   );
                 } else {
                   props.history.push(
