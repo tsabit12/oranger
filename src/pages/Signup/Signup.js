@@ -55,6 +55,7 @@ const ButtonText = styled((props) => (
 
 const Signup = (props) => {
   const { agama: agamaList, berkas: berkasList } = props.references;
+
   const [tabValue, settabValue] = useState(0);
   const [identitas, setidentitas] = useState({
     fullname: "",
@@ -383,8 +384,14 @@ Signup.propTypes = {
 };
 
 function mapStateToProps(state) {
+  const { agama, berkas, office } = state.references;
+
   return {
-    references: state.references,
+    references: {
+      agama,
+      berkas: berkas.filter((row) => Number(row.with_file) === 1),
+      office,
+    },
   };
 }
 

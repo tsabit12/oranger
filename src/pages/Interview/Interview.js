@@ -19,21 +19,24 @@ import api from "../../api";
 import styled from "@emotion/styled";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
-import { ModalLulus, ModalTidakLulus } from "./components";
+import { ModalTidakLulus } from "./components";
+import { getBerkas } from "../../actions/references";
 
 const ImageCard = styled(Paper)({
   overflow: "hidden",
 });
 
 const Interview = (props) => {
-  const { kandidatData } = props;
+  const { kandidatData, interviewQuestion } = props;
 
   const [loading, setloading] = useState(true);
   const [berkas, setberkas] = useState([]);
   const [nilai, setnilai] = useState({});
-  const [lulusVisible, setlulusVisible] = useState(false);
+  const [confirm, setConfirm] = useState({
+    visible: false,
+    message: "",
+  });
   const [success, setsuccess] = useState(false);
-  const [tidakLulus, settidakLulus] = useState(false);
 
   useEffect(() => {
     if (Object.keys(kandidatData).length > 0) {
@@ -41,6 +44,7 @@ const Interview = (props) => {
         setloading(true);
 
         try {
+          await props.getBerkas();
           const { status, message, result } = await api.user.berkas({
             username: kandidatData.username,
           });
@@ -59,6 +63,16 @@ const Interview = (props) => {
   }, [kandidatData]);
 
   useEffect(() => {
+    if (Object.keys(interviewQuestion).length > 0) {
+      const key = {};
+      interviewQuestion.forEach((row) => {
+        key[row.berkasid] = 0;
+      });
+      setnilai((prev) => ({ ...prev, ...key }));
+    }
+  }, [interviewQuestion]);
+
+  useEffect(() => {
     if (berkas.length > 0) {
       const key = {};
 
@@ -66,7 +80,7 @@ const Interview = (props) => {
         key[row.berkasid] = Number(row.nilai) / 20;
       });
 
-      setnilai(key);
+      setnilai((prev) => ({ ...prev, ...key }));
     }
   }, [berkas]);
 
@@ -90,34 +104,45 @@ const Interview = (props) => {
     }
   };
 
-  const handleSuccess = (type) => {
-    if (type === "lulus") {
-      setlulusVisible(false);
-    } else {
-      settidakLulus(false);
+  const handleSubmit = async () => {
+    const nilaiVal = [];
+
+    interviewQuestion.forEach((row) => {
+      nilaiVal.push({
+        value: Number(nilai[row.berkasid]) * 20,
+        berkasid: row.berkasid,
+      });
+    });
+
+    const payload = {
+      username: kandidatData.username,
+      nilai: JSON.stringify(nilaiVal),
+      status: confirm.message,
+    };
+
+    try {
+      const add = await api.user.review(payload);
+      setsuccess(true);
+      setTimeout(() => {
+        props.history.replace("/kandidat");
+      }, 1000);
+      if (add.status) {
+        return Promise.resolve();
+      } else {
+        return Promise.reject(add);
+      }
+    } catch (error) {
+      return Promise.reject(error);
     }
-
-    setsuccess(true);
-
-    setTimeout(() => {
-      props.history.replace("/kandidat");
-    }, 1000);
   };
 
   if (Object.keys(kandidatData).length > 0) {
     return (
       <React.Fragment>
-        <ModalLulus
-          open={lulusVisible}
-          data={kandidatData}
-          onClose={() => setlulusVisible(false)}
-          onSucces={() => handleSuccess("lulus")}
-        />
         <ModalTidakLulus
-          open={tidakLulus}
-          onClose={() => settidakLulus(false)}
-          username={kandidatData.username}
-          onSuccess={() => handleSuccess("tidaklulus")}
+          data={confirm}
+          onClose={() => setConfirm((prev) => ({ ...prev, visible: false }))}
+          onSubmit={handleSubmit}
         />
         {loading ? (
           <Typography>Memuat berkas...</Typography>
@@ -160,13 +185,34 @@ const Interview = (props) => {
                 </Grid>
               ))}
             </Grid>
+            {interviewQuestion.length > 0 &&
+              interviewQuestion.map((row, i) => (
+                <Stack direction={"row"} justifyContent="space-between" key={i}>
+                  <Typography>{row.keterangan}</Typography>
+                  <Rating
+                    name={row.berkasid}
+                    value={nilai[row.berkasid]}
+                    onChange={(event, newValue) =>
+                      setnilai((prev) => ({
+                        ...prev,
+                        [row.berkasid]: newValue,
+                      }))
+                    }
+                  />
+                </Stack>
+              ))}
             <Stack direction={"row"} spacing={"20px"}>
               <Button
                 fullWidth
                 variant="outlined"
                 color="error"
                 endIcon={<CloseIcon />}
-                onClick={() => settidakLulus(true)}
+                onClick={() =>
+                  setConfirm({
+                    visible: true,
+                    message: "S3",
+                  })
+                }
               >
                 MITRA INI TIDAK LULUS
               </Button>
@@ -174,13 +220,20 @@ const Interview = (props) => {
                 fullWidth
                 variant="outlined"
                 endIcon={<CheckIcon />}
-                onClick={() => setlulusVisible(true)}
+                onClick={() =>
+                  setConfirm({
+                    visible: true,
+                    message: "S2",
+                  })
+                }
               >
                 MITRA INI LULUS
               </Button>
             </Stack>
             {success && (
-              <Alert severity="success">DATA BERHASIL DI UPDATE</Alert>
+              <Alert severity="success" variant="filled">
+                Data kandidat berhasil di update
+              </Alert>
             )}
           </Stack>
         )}
@@ -216,6 +269,8 @@ Interview.propTypes = {
   history: PropTypes.shape({
     replace: PropTypes.func.isRequired,
   }).isRequired,
+  interviewQuestion: PropTypes.array.isRequired,
+  getBerkas: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state, props) {
@@ -235,7 +290,10 @@ function mapStateToProps(state, props) {
 
   return {
     kandidatData,
+    interviewQuestion: state.references.berkas.filter(
+      (row) => Number(row.with_file) === 0
+    ),
   };
 }
 
-export default connect(mapStateToProps, null)(Interview);
+export default connect(mapStateToProps, { getBerkas })(Interview);

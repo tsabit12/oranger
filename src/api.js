@@ -54,9 +54,9 @@ export default {
       axios
         .post(`${process.env.REACT_APP_ENDPOINT}/kandidat/pks`, { ...payload })
         .then((res) => res.data),
-    tidaklulus: (payload) =>
+    review: (payload) =>
       axios
-        .post(`${process.env.REACT_APP_ENDPOINT}/kandidat/tidaklulus`, {
+        .post(`${process.env.REACT_APP_ENDPOINT}/kandidat/review`, {
           ...payload,
         })
         .then((res) => res.data),

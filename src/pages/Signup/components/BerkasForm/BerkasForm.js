@@ -2,7 +2,7 @@ import { Box } from "@mui/system";
 import React from "react";
 import PropTypes from "prop-types";
 import { FileUploader } from "react-drag-drop-files";
-import { FormHelperText, Stack, Typography } from "@mui/material";
+import { Alert, FormHelperText, Stack, Typography } from "@mui/material";
 import styled from "@emotion/styled";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 
@@ -27,6 +27,11 @@ const BerkasForm = ({ list, onChange, onError, errors, values }) => {
         <span style={{ color: "red" }}>jpg/pdf/png/jpeg</span>
       </Typography>
       <Stack spacing={"20px"}>
+        {errors.global && (
+          <Alert severity="error" variant="filled">
+            {errors.global}
+          </Alert>
+        )}
         {list.map((row, index) => (
           <Stack spacing={"10px"} key={index}>
             <Typography>{row.keterangan}</Typography>

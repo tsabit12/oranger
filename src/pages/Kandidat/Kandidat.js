@@ -1,10 +1,10 @@
 import { Box } from "@mui/system";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { getkandidat } from "../../actions/kandidat";
 import MUIDataTable from "mui-datatables";
-import { Button } from "@mui/material";
+import { Button, Typography, CircularProgress } from "@mui/material";
 import styled from "@emotion/styled";
 
 const ButtonInterview = styled(Button)({
@@ -15,13 +15,18 @@ const ButtonInterview = styled(Button)({
 });
 
 const Kandidat = (props) => {
+  const [isLoading, setisLoading] = useState(false);
+
   useEffect(() => {
     (async () => {
+      setisLoading(true);
       try {
         await props.getkandidat({ page: props.activePage });
       } catch (error) {
         console.log(error);
       }
+
+      setisLoading(false);
     })();
   }, []);
 
@@ -69,7 +74,7 @@ const Kandidat = (props) => {
       },
     },
     {
-      name: "status_kawin",
+      name: "status",
       label: "Status",
       options: {
         filter: false,
@@ -83,6 +88,10 @@ const Kandidat = (props) => {
         sort: false,
         filter: false,
         customBodyRender: (value) => {
+          if (isLoading && props.kandidates.length === 0) {
+            return null;
+          }
+
           return (
             <ButtonInterview
               size="small"
@@ -102,7 +111,7 @@ const Kandidat = (props) => {
   ];
 
   const options = {
-    filter: true,
+    filters: false,
     filterType: "dropdown",
     serverSide: true,
     count: props.count,
@@ -115,8 +124,9 @@ const Kandidat = (props) => {
       }
     },
     elevation: 1,
-    rowsPerPage: 10,
-    rowsPerPageOptions: [10, 50, 100],
+    rowsPerPage: 5,
+    rowsPerPageOptions: [5],
+    search: false,
   };
 
   const handleChangePage = async (page) => {
@@ -130,7 +140,22 @@ const Kandidat = (props) => {
   return (
     <Box>
       <MUIDataTable
-        data={props.kandidates}
+        title={
+          <Typography>
+            Data Kandidat{" "}
+            {isLoading && (
+              <CircularProgress
+                size={24}
+                sx={{ marginLeft: 4, position: "relative", top: 4 }}
+              />
+            )}
+          </Typography>
+        }
+        data={
+          isLoading && props.kandidates.length === 0
+            ? [["Loading.."]]
+            : props.kandidates
+        }
         columns={columns}
         options={options}
       />
