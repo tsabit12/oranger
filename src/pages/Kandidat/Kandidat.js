@@ -7,6 +7,8 @@ import MUIDataTable from "mui-datatables";
 import { Button, Typography, CircularProgress } from "@mui/material";
 import styled from "@emotion/styled";
 
+const LIMIT = 10;
+
 const ButtonInterview = styled(Button)({
   fontSize: "14px",
   textTransform: "none",
@@ -21,7 +23,7 @@ const Kandidat = (props) => {
     (async () => {
       setisLoading(true);
       try {
-        await props.getkandidat({ page: props.activePage });
+        await props.getkandidat({ page: props.activePage, limit: LIMIT });
       } catch (error) {
         console.log(error);
       }
@@ -133,17 +135,22 @@ const Kandidat = (props) => {
       }
     },
     elevation: 1,
-    rowsPerPage: 5,
-    rowsPerPageOptions: [5],
+    rowsPerPage: LIMIT,
+    rowsPerPageOptions: [LIMIT],
     search: false,
+    selectableRows: false,
   };
 
   const handleChangePage = async (page) => {
+    const newoffset = page * LIMIT;
+    setisLoading(true);
     try {
-      await props.getkandidat({ page });
+      await props.getkandidat({ page: newoffset, limit: LIMIT });
     } catch (error) {
       console.log(error);
     }
+
+    setisLoading(false);
   };
 
   return (
