@@ -7,7 +7,7 @@ const initialState = [
   {
     path: "/kandidat",
     icon: "groups",
-    title: "Data Kandidat",
+    title: "Kandidat Mitra",
   },
   {
     path: "/pks",
