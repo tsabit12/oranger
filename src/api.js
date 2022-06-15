@@ -67,4 +67,10 @@ export default {
         .get(`${process.env.REACT_APP_ENDPOINT}/pks`, { params })
         .then((res) => res.data),
   },
+  trx: {
+    estimasi: (params) =>
+      axios
+        .get(`${process.env.REACT_APP_ENDPOINT}/estimasi`, { params })
+        .then((res) => res.data),
+  },
 };

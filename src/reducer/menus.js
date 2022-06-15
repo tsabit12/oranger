@@ -14,6 +14,11 @@ const initialState = [
     icon: "work_history",
     title: "Data PKS",
   },
+  {
+    path: "/estimasi",
+    icon: "batch_prediction",
+    title: "Estimasi Fee",
+  },
 ];
 
 export default function menus(state = initialState, action = {}) {

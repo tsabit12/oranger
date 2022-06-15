@@ -4,3 +4,4 @@ export const LOGGED_IN = "LOGGED_IN";
 export const LOGGED_OUT = "LOGGED_OUT";
 export const GET_KANDIDAT = "GET_KANDIDAT";
 export const GET_PKS = "GET_PKS";
+export const GET_ESTIMASI = "GET_ESTIMASI";

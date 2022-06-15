@@ -23,7 +23,7 @@ import {
 import styled from "@emotion/styled";
 import FilterListIcon from "@mui/icons-material/FilterList";
 
-const LIMIT = 10;
+const LIMIT = 2;
 
 const ButtonInterview = styled(Button)({
   fontSize: "14px",

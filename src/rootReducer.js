@@ -4,6 +4,7 @@ import references from "./reducer/references";
 import menus from "./reducer/menus";
 import kandidat from "./reducer/kandidat";
 import pks from "./reducer/pks";
+import estimasi from "./reducer/estimasi";
 
 export default combineReducers({
   auth,
@@ -11,4 +12,5 @@ export default combineReducers({
   menus,
   kandidat,
   pks,
+  estimasi,
 });

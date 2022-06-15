@@ -26,6 +26,8 @@ export const convertDate = (dateValue, type) => {
     return `${year}-${month}-${day} 00:00:00`;
   } else if (type === "yyyymmdd") {
     return `${year}-${month}-${day}`;
+  } else if (type === "periode") {
+    return `${year}-${month}`;
   } else {
     return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
   }
@@ -49,4 +51,40 @@ export const stringToColor = (string) => {
   /* eslint-enable no-bitwise */
 
   return color;
+};
+
+export const decimalNumber = (number) => {
+  if (number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  } else {
+    return "0";
+  }
+};
+
+export const calculatePeriode = (dateValue, tanggal) => {
+  var date = new Date(dateValue);
+
+  var defaultStartPeriode = convertDate(date, "periode");
+  var defaultEndPeriode = convertDate(
+    new Date(date.getFullYear(), date.getMonth() + 1, 0),
+    "yyyymmdd"
+  );
+
+  const result = {
+    start: `${defaultStartPeriode}-01`,
+    end: defaultEndPeriode,
+  };
+
+  if (Number(tanggal) > 1) {
+    var startPeriode = convertDate(date, "periode");
+    var endPeriode = convertDate(
+      new Date(date.setMonth(date.getMonth() + 1)),
+      "periode"
+    );
+
+    result.start = `${startPeriode}-${tanggal.toString().padStart(2, "0")}`;
+    result.end = `${endPeriode}-${tanggal.toString().padStart(2, "0")}`;
+  }
+
+  return result;
 };
