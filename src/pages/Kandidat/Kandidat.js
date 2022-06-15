@@ -138,7 +138,7 @@ const Kandidat = (props) => {
     rowsPerPage: LIMIT,
     rowsPerPageOptions: [LIMIT],
     search: false,
-    selectableRows: false,
+    selectableRows: "none",
   };
 
   const handleChangePage = async (page) => {

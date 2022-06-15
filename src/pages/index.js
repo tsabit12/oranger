@@ -4,3 +4,4 @@ export { default as SignupPage } from "./Signup";
 export { default as Kandidat } from "./Kandidat";
 export { default as Interview } from "./Interview";
 export { default as AddPks } from "./AddPks";
+export { default as Pks } from "./Pks";

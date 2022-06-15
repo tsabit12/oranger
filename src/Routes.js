@@ -7,6 +7,7 @@ import {
   Interview,
   Kandidat,
   LoginPage,
+  Pks,
   SignupPage,
 } from "./pages";
 import { GuestRoute, UserRoute } from "./routing";
@@ -39,6 +40,7 @@ const Routes = () => {
         layout={SidebarLayout}
         component={AddPks}
       />
+      <UserRoute path="/pks" exact layout={SidebarLayout} component={Pks} />
       <GuestRoute
         path="/login"
         exact

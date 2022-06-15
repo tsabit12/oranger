@@ -61,4 +61,10 @@ export default {
         })
         .then((res) => res.data),
   },
+  pks: {
+    get: (params) =>
+      axios
+        .get(`${process.env.REACT_APP_ENDPOINT}/pks`, { params })
+        .then((res) => res.data),
+  },
 };
