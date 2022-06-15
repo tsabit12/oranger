@@ -23,7 +23,7 @@ import {
 import styled from "@emotion/styled";
 import FilterListIcon from "@mui/icons-material/FilterList";
 
-const LIMIT = 2;
+const LIMIT = 10;
 
 const ButtonInterview = styled(Button)({
   fontSize: "14px",
@@ -46,11 +46,14 @@ const Kandidat = (props) => {
     (async () => {
       setisLoading(true);
       try {
-        await props.getkandidat({
-          page: props.activePage,
-          limit: LIMIT,
-          status: filter.status,
-        });
+        await props.getkandidat(
+          {
+            page: 0,
+            limit: LIMIT,
+            status: filter.status,
+          },
+          0
+        );
       } catch (error) {
         console.log(error);
       }
@@ -73,6 +76,21 @@ const Kandidat = (props) => {
   };
 
   const columns = [
+    {
+      name: "kantor",
+      label: "#",
+      options: {
+        customBodyRender: (value, tableMeta) => {
+          if (isLoading && props.kandidates.length === 0) {
+            return <span>Loading...</span>;
+          } else {
+            let rowIndex =
+              props.activePage * LIMIT + (Number(tableMeta.rowIndex) + 1);
+            return <span>{rowIndex}</span>;
+          }
+        },
+      },
+    },
     {
       name: "kantor",
       label: "Kantor",
@@ -179,13 +197,16 @@ const Kandidat = (props) => {
     const newoffset = page * LIMIT;
     setisLoading(true);
     try {
-      await props.getkandidat({
-        page: newoffset,
-        limit: LIMIT,
-        status: filter.status,
-        nik: filter.nik ? filter.nik : undefined,
-        fullname: filter.fullname ? filter.fullname : undefined,
-      });
+      await props.getkandidat(
+        {
+          page: newoffset,
+          limit: LIMIT,
+          status: filter.status,
+          nik: filter.nik ? filter.nik : undefined,
+          fullname: filter.fullname ? filter.fullname : undefined,
+        },
+        page
+      );
     } catch (error) {
       console.log(error);
     }
@@ -203,7 +224,7 @@ const Kandidat = (props) => {
     setisLoading(true);
 
     try {
-      await props.getkandidat({ page: 0, limit: LIMIT, status: "S0" });
+      await props.getkandidat({ page: 0, limit: LIMIT, status: "S0" }, 0);
     } catch (error) {
       console.log({ error });
     }
@@ -216,13 +237,16 @@ const Kandidat = (props) => {
     setAnchorEl(null);
 
     try {
-      await props.getkandidat({
-        page: 0,
-        limit: LIMIT,
-        nik: filter.nik ? filter.nik : undefined,
-        status: filter.status,
-        fullname: filter.fullname ? filter.fullname : undefined,
-      });
+      await props.getkandidat(
+        {
+          page: 0,
+          limit: LIMIT,
+          nik: filter.nik ? filter.nik : undefined,
+          status: filter.status,
+          fullname: filter.fullname ? filter.fullname : undefined,
+        },
+        0
+      );
     } catch (error) {
       console.log(error);
     }

@@ -47,7 +47,7 @@ const Pks = (props) => {
     (async () => {
       setisLoading(true);
       try {
-        await props.getpks({ page: props.activePage, limit: LIMIT });
+        await props.getpks({ page: 0, limit: LIMIT }, 0);
       } catch (error) {
         console.log(error);
       }
@@ -57,6 +57,21 @@ const Pks = (props) => {
   }, []);
 
   const columns = [
+    {
+      name: "no_pks",
+      label: "#",
+      options: {
+        customBodyRender: (value, tableMeta) => {
+          if (isLoading && props.pkslist.length === 0) {
+            return <span>Loading...</span>;
+          }
+
+          let rowIndex =
+            props.activePage * LIMIT + (Number(tableMeta.rowIndex) + 1);
+          return <span>{rowIndex}</span>;
+        },
+      },
+    },
     {
       name: "no_pks",
       label: "Nomor PKS",
@@ -94,6 +109,16 @@ const Pks = (props) => {
       label: "Status",
       options: {
         sort: false,
+        setCellHeaderProps: () => ({
+          style: {
+            textAlign: "center",
+          },
+        }),
+        setCellProps: () => ({
+          style: {
+            textAlign: "center",
+          },
+        }),
         customBodyRender: (value) => {
           if (isLoading && props.pkslist.length === 0) {
             return null;
@@ -148,12 +173,15 @@ const Pks = (props) => {
     const newoffset = page * LIMIT;
     setisLoading(true);
     try {
-      await props.getpks({
-        page: newoffset,
-        limit: LIMIT,
-        nik: filter.nik ? filter.nik : undefined,
-        status: filter.status,
-      });
+      await props.getpks(
+        {
+          page: newoffset,
+          limit: LIMIT,
+          nik: filter.nik ? filter.nik : undefined,
+          status: filter.status,
+        },
+        page
+      );
     } catch (error) {
       console.log(error);
     }
@@ -176,7 +204,7 @@ const Pks = (props) => {
     setisLoading(true);
 
     try {
-      await props.getpks({ page: 0, limit: LIMIT });
+      await props.getpks({ page: 0, limit: LIMIT }, 0);
     } catch (error) {
       console.log({ error });
     }
@@ -189,12 +217,15 @@ const Pks = (props) => {
     setAnchorEl(null);
 
     try {
-      await props.getpks({
-        page: 0,
-        limit: LIMIT,
-        nik: filter.nik ? filter.nik : undefined,
-        status: filter.status,
-      });
+      await props.getpks(
+        {
+          page: 0,
+          limit: LIMIT,
+          nik: filter.nik ? filter.nik : undefined,
+          status: filter.status,
+        },
+        0
+      );
     } catch (error) {
       console.log(error);
     }

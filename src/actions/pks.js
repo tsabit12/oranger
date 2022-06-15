@@ -1,12 +1,12 @@
 import api from "../api";
 import { GET_PKS } from "../types";
 
-export const getpks = (params) => (dispatch) =>
+export const getpks = (params, page) => (dispatch) =>
   api.pks.get(params).then((res) => {
     if (res.status === true) {
       dispatch({
         type: GET_PKS,
-        page: params.page,
+        page,
         data: res.data,
         total: res.total,
       });
