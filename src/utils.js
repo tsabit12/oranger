@@ -88,3 +88,22 @@ export const calculatePeriode = (dateValue, tanggal) => {
 
   return result;
 };
+
+export const mappingRegional = (regional) => {
+  switch (regional) {
+    case "REGIONAL_MEDAN":
+      return "01";
+    case "REGIONAL_JAKARTA":
+      return "02";
+    case "REGIONAL_BANDUNG":
+      return "03";
+    case "REGIONAL_SEMARANG":
+      return "04";
+    case "REGIONAL_SURABAYA":
+      return "05";
+    case "REGIONAL_MAKASAR":
+      return "06";
+    default:
+      return "P0";
+  }
+};

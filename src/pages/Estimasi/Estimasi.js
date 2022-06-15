@@ -6,6 +6,8 @@ import {
   Grid,
   IconButton,
   Menu,
+  MenuItem,
+  Select,
   Stack,
   TextField,
   Tooltip,
@@ -17,11 +19,12 @@ import { connect } from "react-redux";
 import { getestimasi } from "../../actions/estimasi";
 import PropTypes from "prop-types";
 import MUIDataTable from "mui-datatables";
-import { calculatePeriode, decimalNumber } from "../../utils";
+import { calculatePeriode, decimalNumber, mappingRegional } from "../../utils";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { getOffice } from "../../actions/references";
 
 const LIMIT = 15;
 
@@ -30,6 +33,9 @@ const Estimasi = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [filter, setfilter] = useState({
     periode: new Date(),
+    regions: [],
+    wilayah: "P0",
+    kprk: "P0",
   });
 
   useEffect(() => {
@@ -38,12 +44,15 @@ const Estimasi = (props) => {
       const periode = calculatePeriode(filter.periode, 1);
 
       try {
+        await props.getOffice();
         await props.getestimasi(
           {
             page: 0,
             limit: LIMIT,
             tgl_awal: periode.start,
             tgl_akhir: periode.end,
+            regional: filter.wilayah,
+            kprk: filter.kprk,
           },
           0
         );
@@ -54,6 +63,17 @@ const Estimasi = (props) => {
       setisLoading(false);
     })();
   }, []);
+
+  useEffect(() => {
+    if (Object.keys(props.offices).length > 0) {
+      let regions = [];
+      for (var property in props.offices) {
+        regions.push(property);
+      }
+
+      setfilter((prev) => ({ ...prev, regions }));
+    }
+  }, [props.offices]);
 
   const columns = [
     {
@@ -255,6 +275,7 @@ const Estimasi = (props) => {
           limit: LIMIT,
           tgl_awal: periode.start,
           tgl_akhir: periode.end,
+          regional: mappingRegional(filter.wilayah),
         },
         page
       );
@@ -269,9 +290,12 @@ const Estimasi = (props) => {
     setfilter((prev) => ({ ...prev, [name]: val }));
 
   const handleResetFilter = async () => {
-    setfilter({
+    setfilter((prev) => ({
+      ...prev,
       periode: new Date(),
-    });
+      wilayah: "P0",
+      kprk: "P0",
+    }));
 
     setAnchorEl(null);
     setisLoading(true);
@@ -284,6 +308,8 @@ const Estimasi = (props) => {
           limit: LIMIT,
           tgl_awal: periode.start,
           tgl_akhir: periode.end,
+          regional: "P0",
+          kprk: "P0",
         },
         0
       );
@@ -306,6 +332,8 @@ const Estimasi = (props) => {
           limit: LIMIT,
           tgl_awal: periode.start,
           tgl_akhir: periode.end,
+          regional: mappingRegional(filter.wilayah),
+          kprk: filter.kprk,
         },
         0
       );
@@ -314,6 +342,16 @@ const Estimasi = (props) => {
     }
 
     setisLoading(false);
+  };
+
+  const handleChangeFilter = (e) => {
+    const { name, value } = e.target;
+
+    if (name === "wilayah") {
+      setfilter((prev) => ({ ...prev, [name]: value, kprk: "P0" }));
+    } else {
+      setfilter((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   return (
@@ -345,7 +383,7 @@ const Estimasi = (props) => {
           elevation: 0,
           sx: {
             overflow: "visible",
-            width: 400,
+            width: 500,
             filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
             // mt: 1.5,
             "&:before": {
@@ -388,6 +426,42 @@ const Estimasi = (props) => {
                   />
                 </FormControl>
               </Grid>
+              <Grid item xs={12} lg={filter.wilayah === "P0" ? 12 : 5}>
+                <FormControl fullWidth>
+                  <Select
+                    name="wilayah"
+                    value={filter.wilayah}
+                    onChange={handleChangeFilter}
+                    size="small"
+                  >
+                    <MenuItem value="P0">Semua Wilayah</MenuItem>
+                    {filter.regions.map((row, i) => (
+                      <MenuItem key={i} value={row}>
+                        {row}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              {filter.wilayah !== "P0" && (
+                <Grid item xs={12} lg={7}>
+                  <FormControl fullWidth>
+                    <Select
+                      name="kprk"
+                      value={filter.kprk}
+                      size="small"
+                      onChange={handleChangeFilter}
+                    >
+                      <MenuItem value="P0">Semua Kantor</MenuItem>
+                      {props.offices[filter.wilayah].map((row, i) => (
+                        <MenuItem key={i} value={row.nopend}>
+                          {row.nopend} - {row.kantor}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+              )}
             </Grid>
           </Box>
           <Divider />
@@ -417,6 +491,8 @@ Estimasi.propTypes = {
   count: PropTypes.number.isRequired,
   activePage: PropTypes.number.isRequired,
   list: PropTypes.array.isRequired,
+  getOffice: PropTypes.func.isRequired,
+  offices: PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state) {
@@ -428,7 +504,8 @@ function mapStateToProps(state) {
     list,
     count: total,
     activePage: page,
+    offices: state.references.office,
   };
 }
 
-export default connect(mapStateToProps, { getestimasi })(Estimasi);
+export default connect(mapStateToProps, { getestimasi, getOffice })(Estimasi);
