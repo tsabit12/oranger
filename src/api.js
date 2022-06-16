@@ -26,6 +26,12 @@ export default {
           ...payload,
         })
         .then((res) => res.data),
+    insertBerkas: (payload) =>
+      axios
+        .post(`${process.env.REACT_APP_ENDPOINT}/referensi/berkas`, {
+          ...payload,
+        })
+        .then((res) => res.data),
   },
   register: (formData) =>
     axios

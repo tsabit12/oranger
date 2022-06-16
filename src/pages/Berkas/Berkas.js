@@ -2,10 +2,10 @@ import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { getBerkas, updateBerkas } from "../../actions/references";
+import { getBerkas, updateBerkas, addBerkas } from "../../actions/references";
 import MUIDataTable from "mui-datatables";
-import { Chip, Icon, IconButton } from "@mui/material";
-import { ModalUpdate } from "./components";
+import { Chip, Icon, IconButton, Tooltip } from "@mui/material";
+import { ModalAdd, ModalUpdate } from "./components";
 
 const Berkas = (props) => {
   const [loading, setloading] = useState(false);
@@ -13,6 +13,7 @@ const Berkas = (props) => {
     visible: false,
     data: {},
   });
+  const [add, setadd] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -110,6 +111,15 @@ const Berkas = (props) => {
     search: false,
     download: false,
     selectableRows: "none",
+    customToolbar: () => {
+      return (
+        <IconButton onClick={() => setadd(true)}>
+          <Tooltip title={"Tambah berkas"}>
+            <Icon>add</Icon>
+          </Tooltip>
+        </IconButton>
+      );
+    },
   };
 
   const onClickUpdate = (value) => {
@@ -126,6 +136,11 @@ const Berkas = (props) => {
         onClose={() => setupdateData((prev) => ({ ...prev, visible: false }))}
         onUpdate={props.updateBerkas}
       />
+      <ModalAdd
+        visible={add}
+        onClose={() => setadd(false)}
+        onAdd={props.addBerkas}
+      />
       <MUIDataTable
         title="DATA REFERENSI BERKAS"
         data={loading && props.list.length === 0 ? [["Loading.."]] : props.list}
@@ -140,6 +155,7 @@ Berkas.propTypes = {
   list: PropTypes.array.isRequired,
   getBerkas: PropTypes.func.isRequired,
   updateBerkas: PropTypes.func.isRequired,
+  addBerkas: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state) {
@@ -148,4 +164,6 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, { getBerkas, updateBerkas })(Berkas);
+export default connect(mapStateToProps, { getBerkas, updateBerkas, addBerkas })(
+  Berkas
+);

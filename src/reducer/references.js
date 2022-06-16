@@ -1,5 +1,5 @@
 import agama from "../data/agama.json";
-import { GET_BERKAS, GET_OFFICE, UPDATE_BERKAS } from "../types";
+import { ADD_BERKAS, GET_BERKAS, GET_OFFICE, UPDATE_BERKAS } from "../types";
 
 const initialState = {
   berkas: [],
@@ -31,6 +31,11 @@ export default function references(state = initialState, action = {}) {
 
           return row;
         }),
+      };
+    case ADD_BERKAS:
+      return {
+        ...state,
+        berkas: [action.inserted, ...state.berkas],
       };
     default:
       return state;

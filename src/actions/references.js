@@ -1,5 +1,5 @@
 import api from "../api";
-import { GET_BERKAS, GET_OFFICE, UPDATE_BERKAS } from "../types";
+import { ADD_BERKAS, GET_BERKAS, GET_OFFICE, UPDATE_BERKAS } from "../types";
 
 export const getBerkas = (params) => (dispatch) =>
   api.references.berkas(params).then((res) => {
@@ -31,6 +31,18 @@ export const updateBerkas = (payload) => (dispatch) =>
       dispatch({
         type: UPDATE_BERKAS,
         data: payload,
+      });
+    } else {
+      return Promise.reject(res);
+    }
+  });
+
+export const addBerkas = (payload) => (dispatch) =>
+  api.references.insertBerkas(payload).then((res) => {
+    if (res.status) {
+      dispatch({
+        type: ADD_BERKAS,
+        inserted: res.inserted,
       });
     } else {
       return Promise.reject(res);
