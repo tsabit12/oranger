@@ -276,6 +276,7 @@ const Estimasi = (props) => {
           tgl_awal: periode.start,
           tgl_akhir: periode.end,
           regional: mappingRegional(filter.wilayah),
+          kprk: filter.kprk,
         },
         page
       );
