@@ -2,12 +2,17 @@ import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { getBerkas } from "../../actions/references";
+import { getBerkas, updateBerkas } from "../../actions/references";
 import MUIDataTable from "mui-datatables";
 import { Chip, Icon, IconButton } from "@mui/material";
+import { ModalUpdate } from "./components";
 
 const Berkas = (props) => {
   const [loading, setloading] = useState(false);
+  const [updateData, setupdateData] = useState({
+    visible: false,
+    data: {},
+  });
 
   useEffect(() => {
     (async () => {
@@ -82,10 +87,15 @@ const Berkas = (props) => {
             textAlign: "center",
           },
         }),
-        customBodyRender: () => {
+        customBodyRender: (value) => {
           if (loading && props.list.length === 0) return null;
           return (
-            <IconButton size="small" sx={{ margin: 0 }} color="primary">
+            <IconButton
+              size="small"
+              sx={{ margin: 0 }}
+              color="primary"
+              onClick={() => onClickUpdate(value)}
+            >
               <Icon>mode</Icon>
             </IconButton>
           );
@@ -102,8 +112,20 @@ const Berkas = (props) => {
     selectableRows: "none",
   };
 
+  const onClickUpdate = (value) => {
+    const find = props.list.find((row) => row.berkasid === value);
+    if (find) {
+      setupdateData((prev) => ({ ...prev, visible: true, data: find }));
+    }
+  };
+
   return (
     <Box>
+      <ModalUpdate
+        data={updateData}
+        onClose={() => setupdateData((prev) => ({ ...prev, visible: false }))}
+        onUpdate={props.updateBerkas}
+      />
       <MUIDataTable
         title="DATA REFERENSI BERKAS"
         data={loading && props.list.length === 0 ? [["Loading.."]] : props.list}
@@ -117,6 +139,7 @@ const Berkas = (props) => {
 Berkas.propTypes = {
   list: PropTypes.array.isRequired,
   getBerkas: PropTypes.func.isRequired,
+  updateBerkas: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state) {
@@ -125,4 +148,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, { getBerkas })(Berkas);
+export default connect(mapStateToProps, { getBerkas, updateBerkas })(Berkas);

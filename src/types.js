@@ -5,3 +5,4 @@ export const LOGGED_OUT = "LOGGED_OUT";
 export const GET_KANDIDAT = "GET_KANDIDAT";
 export const GET_PKS = "GET_PKS";
 export const GET_ESTIMASI = "GET_ESTIMASI";
+export const UPDATE_BERKAS = "UPDATE_BERKAS";

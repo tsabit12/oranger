@@ -1,5 +1,5 @@
 import agama from "../data/agama.json";
-import { GET_BERKAS, GET_OFFICE } from "../types";
+import { GET_BERKAS, GET_OFFICE, UPDATE_BERKAS } from "../types";
 
 const initialState = {
   berkas: [],
@@ -18,6 +18,19 @@ export default function references(state = initialState, action = {}) {
       return {
         ...state,
         office: action.data,
+      };
+    case UPDATE_BERKAS:
+      return {
+        ...state,
+        berkas: state.berkas.map((row) => {
+          if (row.berkasid === action.data.berkasid) {
+            return {
+              ...action.data,
+            };
+          }
+
+          return row;
+        }),
       };
     default:
       return state;

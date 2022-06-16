@@ -20,6 +20,12 @@ export default {
       axios
         .get(`${process.env.REACT_APP_ENDPOINT}/referensi/office`, { params })
         .then((res) => res.data),
+    updateBerkas: (payload) =>
+      axios
+        .put(`${process.env.REACT_APP_ENDPOINT}/referensi/berkas`, {
+          ...payload,
+        })
+        .then((res) => res.data),
   },
   register: (formData) =>
     axios
