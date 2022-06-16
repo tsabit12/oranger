@@ -4,25 +4,26 @@ import { Box } from "@mui/system";
 import {
   CssBaseline,
   Divider,
-  Icon,
   IconButton,
   List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
   Toolbar,
   Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { AppBar, BootstrapTooltip, Drawer, DrawerHeader } from "./components";
+import {
+  AppBar,
+  BootstrapTooltip,
+  CollapseMenu,
+  Drawer,
+  DrawerHeader,
+  SidebarMenu,
+} from "./components";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useTheme } from "@emotion/react";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { connect } from "react-redux";
 import { setLoggedOut } from "../../actions/auth";
-import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
 const Sidebar = (props) => {
@@ -95,39 +96,22 @@ const Sidebar = (props) => {
         </DrawerHeader>
         <Divider />
         <List>
-          {props.menus.map((row, index) => (
-            <ListItem
-              key={index}
-              disablePadding
-              sx={{ display: "block" }}
-              component={Link}
-              to={row.path}
-              button
-              selected={pathname === row.path}
-            >
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Icon>{row.icon}</Icon>
-                </ListItemIcon>
-                <ListItemText
-                  primary={row.title}
-                  sx={{ opacity: open ? 1 : 0 }}
+          {props.menus.map((row, index) => {
+            if (row.collapse) {
+              return (
+                <CollapseMenu data={row} open={open} pathname={pathname} />
+              );
+            } else {
+              return (
+                <SidebarMenu
+                  data={row}
+                  open={open}
+                  pathname={pathname}
+                  key={index}
                 />
-              </ListItemButton>
-            </ListItem>
-          ))}
+              );
+            }
+          })}
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
