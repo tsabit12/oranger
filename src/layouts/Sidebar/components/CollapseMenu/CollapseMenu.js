@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {
   Collapse,
@@ -14,8 +14,16 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import { Link } from "react-router-dom";
 
 const CollapseMenu = (props) => {
-  const { data } = props;
+  const { data, pathname } = props;
   const [opencollapse, setopencollapse] = useState(false);
+
+  useEffect(() => {
+    const pathvalue = `/${pathname.split("/")[1]}`;
+    if (pathvalue === data.path) {
+      setopencollapse(true);
+      props.settitle(data.title);
+    }
+  }, [pathname]);
 
   const handleClick = () => setopencollapse(!opencollapse);
 
@@ -58,7 +66,7 @@ const CollapseMenu = (props) => {
               sx={{ pl: 4 }}
               component={Link}
               to={row.path}
-              selected={props.pathname === row.path}
+              selected={pathname === row.path}
             >
               <ListItemIcon>
                 <Icon>{row.icon}</Icon>
@@ -76,6 +84,7 @@ CollapseMenu.propTypes = {
   data: PropTypes.object.isRequired,
   open: PropTypes.bool.isRequired,
   pathname: PropTypes.string.isRequired,
+  settitle: PropTypes.func.isRequired,
 };
 
 export default CollapseMenu;

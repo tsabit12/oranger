@@ -3,6 +3,7 @@ import { Switch } from "react-router-dom";
 import { LoginLayout, SidebarLayout } from "./layouts";
 import {
   AddPks,
+  BerkasPage,
   Estimasi,
   HomePage,
   Interview,
@@ -47,6 +48,12 @@ const Routes = () => {
         exact
         layout={SidebarLayout}
         component={Estimasi}
+      />
+      <UserRoute
+        path="/referensi/berkas"
+        exact
+        layout={SidebarLayout}
+        component={BerkasPage}
       />
       <GuestRoute
         path="/login"

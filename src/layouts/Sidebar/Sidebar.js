@@ -99,7 +99,13 @@ const Sidebar = (props) => {
           {props.menus.map((row, index) => {
             if (row.collapse) {
               return (
-                <CollapseMenu data={row} open={open} pathname={pathname} />
+                <CollapseMenu
+                  data={row}
+                  open={open}
+                  pathname={pathname}
+                  key={index}
+                  settitle={settitle}
+                />
               );
             } else {
               return (

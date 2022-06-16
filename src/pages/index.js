@@ -6,3 +6,4 @@ export { default as Interview } from "./Interview";
 export { default as AddPks } from "./AddPks";
 export { default as Pks } from "./Pks";
 export { default as Estimasi } from "./Estimasi";
+export { default as BerkasPage } from "./Berkas";
