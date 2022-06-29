@@ -16,6 +16,11 @@ const initialState = [
         icon: "create_new_folder",
         title: "Berkas",
       },
+      {
+        path: "/referensi/office",
+        icon: "home_work",
+        title: "Kantor",
+      },
     ],
   },
   {

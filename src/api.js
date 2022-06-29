@@ -85,4 +85,10 @@ export default {
         .get(`${process.env.REACT_APP_ENDPOINT}/estimasi`, { params })
         .then((res) => res.data),
   },
+  office: {
+    get: (params) =>
+      axios
+        .get(`${process.env.REACT_APP_ENDPOINT}/office`, { params })
+        .then((res) => res.data),
+  },
 };

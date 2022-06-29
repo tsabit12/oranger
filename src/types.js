@@ -7,3 +7,4 @@ export const GET_PKS = "GET_PKS";
 export const GET_ESTIMASI = "GET_ESTIMASI";
 export const UPDATE_BERKAS = "UPDATE_BERKAS";
 export const ADD_BERKAS = "ADD_BERKAS";
+export const GET_KELOLA_OFFICE = "GET_KELOLA_OFFICE";

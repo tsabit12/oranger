@@ -9,6 +9,7 @@ import {
   Interview,
   Kandidat,
   LoginPage,
+  OfficePage,
   Pks,
   SignupPage,
 } from "./pages";
@@ -54,6 +55,12 @@ const Routes = () => {
         exact
         layout={SidebarLayout}
         component={BerkasPage}
+      />
+      <UserRoute
+        path="/referensi/office"
+        exact
+        layout={SidebarLayout}
+        component={OfficePage}
       />
       <GuestRoute
         path="/login"

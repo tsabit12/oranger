@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { getBerkas, updateBerkas, addBerkas } from "../../actions/references";
 import MUIDataTable from "mui-datatables";
-import { Chip, Icon, IconButton, Tooltip } from "@mui/material";
+import { Chip, Icon, IconButton, Tooltip, Typography } from "@mui/material";
 import { ModalAdd, ModalUpdate } from "./components";
 
 const Berkas = (props) => {
@@ -142,7 +142,7 @@ const Berkas = (props) => {
         onAdd={props.addBerkas}
       />
       <MUIDataTable
-        title="DATA REFERENSI BERKAS"
+        title={<Typography>DATA REFERENSI BERKAS</Typography>}
         data={loading && props.list.length === 0 ? [["Loading.."]] : props.list}
         options={options}
         columns={columns}
