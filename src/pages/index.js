@@ -8,3 +8,4 @@ export { default as Pks } from "./Pks";
 export { default as Estimasi } from "./Estimasi";
 export { default as BerkasPage } from "./Berkas";
 export { default as OfficePage } from "./Office";
+export { default as GeneratePage } from "./Generate";

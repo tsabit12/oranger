@@ -28,6 +28,8 @@ export const convertDate = (dateValue, type) => {
     return `${year}-${month}-${day}`;
   } else if (type === "periode") {
     return `${year}-${month}`;
+  } else if (type === "pajak") {
+    return `${day}/${month}/${year}`;
   } else {
     return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
   }
@@ -83,7 +85,13 @@ export const calculatePeriode = (dateValue, tanggal) => {
     );
 
     result.start = `${startPeriode}-${tanggal.toString().padStart(2, "0")}`;
+    // if (Number(tanggal) === 20) {
+    //   result.end = `${endPeriode}-${(Number(tanggal) + 1)
+    //     .toString()
+    //     .padStart(2, "0")}`;
+    // } else {
     result.end = `${endPeriode}-${tanggal.toString().padStart(2, "0")}`;
+    //}
   }
 
   return result;

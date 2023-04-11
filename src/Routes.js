@@ -5,6 +5,7 @@ import {
   AddPks,
   BerkasPage,
   Estimasi,
+  GeneratePage,
   HomePage,
   Interview,
   Kandidat,
@@ -61,6 +62,12 @@ const Routes = () => {
         exact
         layout={SidebarLayout}
         component={OfficePage}
+      />
+      <UserRoute
+        path="/imbaljasa/generate"
+        exact
+        layout={SidebarLayout}
+        component={GeneratePage}
       />
       <GuestRoute
         path="/login"

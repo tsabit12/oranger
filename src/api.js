@@ -84,6 +84,22 @@ export default {
       axios
         .get(`${process.env.REACT_APP_ENDPOINT}/estimasi`, { params })
         .then((res) => res.data),
+    getGenerate: (params) =>
+      axios
+        .get(`${process.env.REACT_APP_ENDPOINT}/estimasi/generate`, { params })
+        .then((res) => res.data),
+    generateUpah: (payload) =>
+      axios
+        .post(`${process.env.REACT_APP_ENDPOINT}/estimasi/upah`, {
+          ...payload,
+        })
+        .then((res) => res.data),
+    generatePajak: (payload) =>
+      axios
+        .post(`${process.env.REACT_APP_ENDPOINT}/estimasi/pajak`, {
+          ...payload,
+        })
+        .then((res) => res.data),
   },
   office: {
     get: (params) =>

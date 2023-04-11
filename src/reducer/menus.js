@@ -36,6 +36,24 @@ const initialState = [
     collapse: false,
   },
   {
+    path: "/imbaljasa",
+    icon: "account_balance_wallet",
+    title: "Imbal Jasa",
+    collapse: true,
+    submenu: [
+      {
+        path: "/imbaljasa/generate",
+        icon: "settings",
+        title: "Generate",
+      },
+      {
+        path: "/referensi/office",
+        icon: "troubleshoot",
+        title: "Laporan",
+      },
+    ],
+  },
+  {
     path: "/estimasi",
     icon: "batch_prediction",
     title: "Estimasi Fee",
